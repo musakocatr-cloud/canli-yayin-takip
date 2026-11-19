@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CANLI YAYIN ARAÇ İŞ TAKİP PANELİ</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            margin: 0;
+            padding: 24px;
+            min-height: 100vh;
+            color: #1e293b;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.20), transparent 36%),
+                radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.18), transparent 40%),
+                radial-gradient(circle at 50% 95%, rgba(99, 102, 241, 0.16), transparent 45%),
+                linear-gradient(160deg, #0b1324 0%, #132238 48%, #0f172a 100%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .sayfa-baslik {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 18px 20px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+        }
+
+        .sayfa-baslik h1 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 800;
+            color: #f8fafc;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .bulut-durum {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(148, 163, 184, 0.22);
+            color: #e2e8f0;
+        }
+
+        .bulut-durum.bagli {
+            background: rgba(16, 185, 129, 0.22);
+            color: #6ee7b7;
+        }
+
+        .bulut-durum.uyari {
+            background: rgba(245, 158, 11, 0.22);
+            color: #fcd34d;
+        }
+
+        .adim-cubugu {
+            display: none;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 22px;
+        }
+
+        .adim-cubugu.gorunur {
+            display: flex;
+        }
+
+        .adim-rozet {
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(226, 232, 240, 0.9);
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .adim-rozet.aktif {
+            background: #0ea5e9;
+            color: #ffffff;
+        }
+
+        .adim-rozet.tamam {
+            background: #10b981;
+            color: #ffffff;
+        }
+
+        .ekran {
+            display: none;
+        }
+
+        .ekran.aktif {
+            display: block;
+        }
+
+        .acilis-kapsayici {
+            min-height: 62vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .acilis-kutu {
+            width: 100%;
+            max-width: 580px;
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 44px rgba(2, 6, 23, 0.35);
+        }
+
+        .ay-sekmeleri {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .ay-sekme {
+            padding: 10px 8px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            color: #334155;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .ay-sekme:hover {
+            border-color: #0f172a;
+        }
+
+        .ay-sekme.secili {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+
+        .kart {
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 28px rgba(2, 6, 23, 0.22);
+        }
+
+        .kart-baslik-satir {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .kart-baslik-satir h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .kart h2 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            color: #0f172a;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .ust-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 10px 24px rgba(2, 6, 23, 0.20);
+        }
+
+        .kayit-donem-secici {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .kayit-donem-secici select {
+            width: auto;
+            min-width: 120px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .form-satir {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .alan {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #0f172a;
+            background: #ffffff;
+        }
+
+        .km-kutusu {
+            background: #f1f5f9;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        textarea {
+            min-height: 76px;
+            resize: vertical;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #0f172a;
+        }
+
+        .buton-grubu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        .btn-ana {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 14px;
+        }
+
+        .btn-ana:hover {
+            background: #1e293b;
+        }
+
+        .btn-yesil {
+            background: #059669;
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 14px;
+        }
+
+        .btn-yesil:hover {
+            background: #047857;
+        }
+
+        .btn-arti {
+            background: #059669;
+            color: #ffffff;
+            padding: 8px 13px;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .btn-arti:hover {
+            background: #047857;
+        }
+
+        .btn-ikincil {
+            background: #e2e8f0;
+            color: #1e293b;
+            padding: 10px 16px;
+            font-size: 13px;
+        }
+
+        .btn-ikincil:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-sil {
+            background: #dc2626;
+            color: #ffffff;
+            padding: 8px 14px;
+            font-size: 12px;
+        }
+
+        .btn-sil:hover {
+            background: #b91c1c;
+        }
+
+        .aksiyon-hucre {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .masraf-giris-satiri {
+            display: grid;
+            grid-template-columns: 1.6fr 1.6fr 1.1fr 1.8fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .is-listesi {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 14px;
+        }
+
+        .is-karti {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-left: 5px solid #059669;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .is-karti h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: #0f172a;
+        }
+
+        .is-karti p {
+            margin: 4px 0;
+            font-size: 13px;
+            color: #334155;
+        }
+
+        .kart-aksiyonlar {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .ozet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 12px;
+        }
+
+        .ozet-kutu {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .ozet-kutu .il-adi {
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .ozet-kutu .il-tutar {
+            font-size: 16px;
+            font-weight: 800;
+            color: #059669;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        th, td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .icerik-kutu {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 16px;
+        }
+
+        .icerik-kutu h3 {
+            margin: 0 0 14px 0;
+            font-size: 16px;
+            color: #0f172a;
+        }
+
+        .toplam-seridi {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-top: 16px;
+            font-size: 15px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .toplam-deger {
+            color: #059669;
+            font-size: 18px;
+        }
+
+        .bos-uyari {
+            color: #64748b;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        .alt-bilgi-satir {
+            display: block;
+            font-size: 12px;
+            color: #475569;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 980px) {
+            .masraf-giris-satiri {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .sayfa-baslik h1 { font-size: 20px; }
+            .ay-sekmeleri { grid-template-columns: repeat(3, 1fr); }
+            .masraf-giris-satiri { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="sayfa-baslik">
+        <h1>CANLI YAYIN ARAÇ İŞ TAKİP PANELİ</h1>
+        <div class="bulut-durum" id="bulutDurumEtiket">Bulut bağlantısı kuruluyor...</div>
+    </div>
+
+    <div class="adim-cubugu" id="adimCubugu">
+        <span class="adim-rozet aktif" id="rozet1" data-hedef="1">1. Yıl ve Ay</span>
+        <span class="adim-rozet" id="rozet2" data-hedef="2">2. İş ve Personel</span>
+        <span class="adim-rozet" id="rozet3" data-hedef="3">3. Masraflar</span>
+        <span class="adim-rozet" id="rozet4" data-hedef="4">4. Yapılan Masraflar</span>
+        <span class="adim-rozet" id="rozet5" data-hedef="5">5. İş ve Masraf Kayıtları</span>
+    </div>
+
+    <!-- SAYFA 1: YIL VE AY SEÇİMİ -->
+    <section id="ekran1" class="ekran aktif">
+        <div class="acilis-kapsayici">
+            <div class="acilis-kutu">
+                <div class="alan" style="margin-bottom: 16px;">
+                    <label for="seciliYil">Yıl</label>
+                    <select id="seciliYil">
+                        <option value="2025">2025</option>
+                        <option value="2026" selected>2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="2029">2029</option>
+                    </select>
+                </div>
+
+                <div class="alan" style="margin-bottom: 22px;">
+                    <label>Ay</label>
+                    <div class="ay-sekmeleri" id="aySekmeleri">
+                        <button type="button" class="ay-sekme" data-ay="01">Ocak</button>
+                        <button type="button" class="ay-sekme" data-ay="02">Şubat</button>
+                        <button type="button" class="ay-sekme" data-ay="03">Mart</button>
+                        <button type="button" class="ay-sekme" data-ay="04">Nisan</button>
+                        <button type="button" class="ay-sekme" data-ay="05">Mayıs</button>
+                        <button type="button" class="ay-sekme" data-ay="06">Haziran</button>
+                        <button type="button" class="ay-sekme" data-ay="07">Temmuz</button>
+                        <button type="button" class="ay-sekme" data-ay="08">Ağustos</button>
+                        <button type="button" class="ay-sekme" data-ay="09">Eylül</button>
+                        <button type="button" class="ay-sekme" data-ay="10">Ekim</button>
+                        <button type="button" class="ay-sekme secili" data-ay="11">Kasım</button>
+                        <button type="button" class="ay-sekme" data-ay="12">Aralık</button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-ana" style="width: 100%;" id="btnDonemIleri" onclick="window.donemIleriGit()">İleri &rarr;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SAYFA 2: PLAKA, ÇIKIŞ/BİTİŞ İLİ + MESAFE, TARİH, İŞ ADI VE PERSONEL -->
+    <section id="ekran2" class="ekran">
+        <div class="ust-bar">
+            <div><strong>Dönem:</strong> <span id="donemEtiketi2"></span></div>
+            <div class="buton-grubu" style="margin-top: 0;">
+                <button type="button" class="btn-ikincil" id="btnDonemeDon">&larr; Yıl / Ay Seçimine Dön</button>
+                <button type="button" class="btn-ikincil" id="btnSayfa2TumMasraflar">İş ve Masraf Kayıtları &rarr;</button>
+            </div>
+        </div>
+
+        <div class="kart">
+            <h2>İş Bilgisi ve Personel</h2>
+
+            <div class="form-satir">
+                <div class="alan">
+                    <label for="aracPlakasi">Araç Plakası</label>
+                    <select id="aracPlakasi">
+                        <option value="" selected></option>
+                        <option value="34 DJ 4342">34 DJ 4342</option>
+                        <option value="06 DJZ 539">06 DJZ 539</option>
+                    </select>
+                </div>
+                <div class="alan">
+                    <label for="cikisIli">Çıkış İli</label>
+                    <select id="cikisIli"></select>
+                </div>
+                <div class="alan">
+                    <label for="bitisIli">Bitiş İli</label>
+                    <select id="bitisIli"></select>
+                </div>
+                <div class="alan">
+                    <label for="mesafeKmGosterge">Mesafe (km)</label>
+                    <input type="text" id="mesafeKmGosterge" class="km-kutusu" readonly placeholder="-">
+                </div>
+            </div>
+
+            <div class="form-satir">
+                <div class="alan">
+                    <label for="gidisTarihi">Gidiş Tarihi</label>
+                    <input type="date" id="gidisTarihi">
+                </div>
+                <div class="alan">
+                    <label for="donusTarihi">Dönüş Tarihi</label>
+                    <input type="date" id="donusTarihi">
+                </div>
+                <div class="alan">
+                    <label for="isBilgisi">İşin Adı</label>
+                    <input type="text" id="isBilgisi">
+                </div>
+                <div class="alan">
+                    <label for="personelSecimi">Personel</label>
+                    <select id="personelSecimi">
+                        <option value="" selected></option>
+                        <option value="Musa Koca">Musa Koca</option>
+                        <option value="İsa Koca">İsa Koca</option>
+                        <option value="Ebubekir Enes Okutan">Ebubekir Enes Okutan</option>
+                        <option value="İbrahim Yetkin">İbrahim Yetkin</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="buton-grubu">
+                <button type="button" class="btn-ana" id="btnSayfa2Ileri">İleri &rarr;</button>
+                <button type="button" class="btn-ikincil" id="btnYeniFormTemizle">Formu Temizle / Yeni İş</button>
+            </div>
+        </div>
+
+        <div class="kart">
+            <div class="kart-baslik-satir">
+                <h2>Seçili Dönemdeki İşler</h2>
+                <div style="min-width: 200px;">
+                    <label for="filtrePlaka">Plaka Filtresi</label>
+                    <select id="filtrePlaka">
+                        <option value="TUMU">Tüm Araçlar</option>
+                        <option value="34 DJ 4342">34 DJ 4342</option>
+                        <option value="06 DJZ 539">06 DJZ 539</option>
+                    </select>
+                </div>
+            </div>
+            <div class="is-listesi" id="donemIsListesi"></div>
+        </div>
+
+        <div class="kart">
+            <h2>Araç Plakasına Göre Toplam Masraf Özeti</h2>
+            <div class="ozet-grid" id="plakaMasrafOzeti"></div>
+        </div>
+
+        <div class="kart">
+            <h2>Çıkış İllerine Göre Toplam Masraf Özeti</h2>
+            <div class="ozet-grid" id="ilMasrafOzeti"></div>
+        </div>
+    </section>
+
+    <!-- SAYFA 3: MASRAFLAR -->
+    <section id="ekran3" class="ekran">
+        <div class="ust-bar">
+            <div><strong>Dönem:</strong> <span id="donemEtiketi3"></span> | <strong id="ozetIsBaslik3"></strong></div>
+            <div class="buton-grubu" style="margin-top: 0;">
+                <button type="button" class="btn-ikincil" id="btnSayfa3Geri">&larr; Geri</button>
+                <button type="button" class="btn-ikincil" id="btnSayfa3KayitlaraDon">İş ve Masraf Kayıtlarına Dön</button>
+                <button type="button" class="btn-ana" id="btnSayfa3Ileri">İleri (Yapılan Masraflar) &rarr;</button>
+            </div>
+        </div>
+
+        <div class="kart">
+            <h2>Masraflar</h2>
+
+            <datalist id="personelOneriListesi">
+                <option value="Musa Koca"></option>
+                <option value="İsa Koca"></option>
+                <option value="Ebubekir Enes Okutan"></option>
+                <option value="İbrahim Yetkin"></option>
+            </datalist>
+
+            <div class="masraf-giris-satiri">
+                <div class="alan">
+                    <label for="masrafKalemiSec">Masraf Kalemi</label>
+                    <select id="masrafKalemiSec"></select>
+                </div>
+                <div class="alan">
+                    <label for="masrafYapanInput">Masrafı Yapan Kişi</label>
+                    <input type="text" id="masrafYapanInput" list="personelOneriListesi" placeholder="İsim seçin veya yazın">
+                </div>
+                <div class="alan">
+                    <label for="masrafFiyati">Fiyatı (TL)</label>
+                    <input type="number" id="masrafFiyati" step="0.01" min="0">
+                </div>
+                <div class="alan">
+                    <label for="masrafNotu">Açıklama / Not</label>
+                    <input type="text" id="masrafNotu">
+                </div>
+                <div class="alan">
+                    <button type="button" class="btn-yesil" id="btnMasrafOnayla">Onayla ve Ekle</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="kart">
+            <h2>Eklenen Masraflar (Hızlı Düzenleme / Silme)</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Masraf Kalemi</th>
+                        <th style="width: 20%;">Masrafı Yapan</th>
+                        <th style="width: 16%;">Fiyatı (TL)</th>
+                        <th style="width: 30%;">Açıklama / Not</th>
+                        <th style="width: 14%;">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody id="masrafTablosuGovde"></tbody>
+            </table>
+
+            <div class="toplam-seridi">
+                <span>Bu İşin Toplam Masrafı:</span>
+                <span class="toplam-deger" id="isToplamMasrafEtiket3">0.00 TL</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SAYFA 4: YAPILAN MASRAFLAR VE İÇERİK DÜZENLEME -->
+    <section id="ekran4" class="ekran">
+        <div class="ust-bar">
+            <div><strong>Dönem:</strong> <span id="donemEtiketi4"></span> | <strong id="ozetIsBaslik4"></strong></div>
+            <div class="buton-grubu" style="margin-top: 0;">
+                <button type="button" class="btn-ikincil" id="btnSayfa4Geri">&larr; Masraflar</button>
+                <button type="button" class="btn-ikincil" id="btnSayfa4TumMasraflar">İş ve Masraf Kayıtları &rarr;</button>
+                <button type="button" class="btn-ana" id="btnIsiBitirListeyeDon">İşi Kaydet ve Dönem İşlerine Dön</button>
+            </div>
+        </div>
+
+        <div class="kart">
+            <h2>Yapılan Masraflar</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 18%;">Masraf Kalemi</th>
+                        <th style="width: 18%;">Masrafı Yapan</th>
+                        <th style="width: 15%;">Fiyatı (TL)</th>
+                        <th style="width: 14%;">Tarih</th>
+                        <th style="width: 21%;">Açıklama</th>
+                        <th style="width: 14%;">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody id="yapilanMasraflarTablosu"></tbody>
+            </table>
+
+            <div class="toplam-seridi">
+                <span>Yapılan Masraflar Toplamı:</span>
+                <span class="toplam-deger" id="isToplamMasrafEtiket4">0.00 TL</span>
+            </div>
+
+            <div class="icerik-kutu" id="masrafIcerikPaneli" style="display: none;">
+                <h3>Seçili Masrafın İçeriği</h3>
+                <div class="form-satir">
+                    <div class="alan">
+                        <label for="icerikKalemSec">Masraf Kalemi</label>
+                        <select id="icerikKalemSec"></select>
+                    </div>
+                    <div class="alan">
+                        <label for="icerikYapanInput">Masrafı Kaydeden / Yapan</label>
+                        <input type="text" id="icerikYapanInput" list="personelOneriListesi">
+                    </div>
+                    <div class="alan">
+                        <label for="icerikFiyatInput">Fiyatı (TL)</label>
+                        <input type="number" id="icerikFiyatInput" step="0.01" min="0">
+                    </div>
+                    <div class="alan">
+                        <label for="icerikTarihInput">Masraf Tarihi</label>
+                        <input type="date" id="icerikTarihInput">
+                    </div>
+                </div>
+                <div class="alan">
+                    <label for="icerikAciklamaInput">Açıklama / Detay</label>
+                    <input type="text" id="icerikAciklamaInput">
+                </div>
+                <div class="buton-grubu">
+                    <button type="button" class="btn-yesil" id="btnIcerikDuzenleKaydet">Düzenle (Kaydet)</button>
+                    <button type="button" class="btn-sil" id="btnIcerikSil">Sil</button>
+                    <button type="button" class="btn-ikincil" id="btnIcerikKapat">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SAYFA 5: İŞ BAZINDA KAYDEDİLMİŞ MASRAF ÖZETLERİ -->
+    <section id="ekran5" class="ekran">
+        <div class="ust-bar">
+            <div class="kayit-donem-secici">
+                <strong>Dönem:</strong> <span id="donemEtiketi5"></span>
+                <label for="kayitAySec" style="margin: 0 0 0 8px;">Ay:</label>
+                <select id="kayitAySec">
+                    <option value="01">Ocak</option>
+                    <option value="02">Şubat</option>
+                    <option value="03">Mart</option>
+                    <option value="04">Nisan</option>
+                    <option value="05">Mayıs</option>
+                    <option value="06">Haziran</option>
+                    <option value="07">Temmuz</option>
+                    <option value="08">Ağustos</option>
+                    <option value="09">Eylül</option>
+                    <option value="10">Ekim</option>
+                    <option value="11">Kasım</option>
+                    <option value="12">Aralık</option>
+                </select>
+                <label for="kayitYilSec" style="margin: 0;">Yıl:</label>
+                <select id="kayitYilSec">
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                </select>
+            </div>
+            <div class="buton-grubu" style="margin-top: 0;">
+                <button type="button" class="btn-ikincil" id="btnSayfa5DonemIslerineDon">&larr; Dönem İşlerine Dön</button>
+            </div>
+        </div>
+
+        <div class="kart">
+            <h2 id="kayitlarBaslik5">Seçili Aydaki İşler ve Masrafları</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 32%;">İş Adı ve Çıkış - Bitiş İli</th>
+                        <th style="width: 13%;">Mesafe</th>
+                        <th style="width: 14%;">Plaka</th>
+                        <th style="width: 19%;">İş Toplam Masrafı (TL)</th>
+                        <th style="width: 22%;">İçerik ve Ekle</th>
+                    </tr>
+                </thead>
+                <tbody id="tumKaydedilmisMasraflarTablosu"></tbody>
+            </table>
+
+            <div class="toplam-seridi">
+                <span>Seçili Ay Genel Toplam Masraf:</span>
+                <span class="toplam-deger" id="donemGenelToplamMasrafEtiket">0.00 TL</span>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import {
+        getFirestore,
+        doc,
+        setDoc,
+        onSnapshot
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    (function () {
+        var DEPO_ANAHTARI = "canliYayinIsTakip_v17";
+        var FIRESTORE_KOLEKSIYON = "canli_yayin_is_takip";
+        var FIRESTORE_DOKUMAN = "ortak_veri";
+
+        var firebaseConfig = {
+            apiKey: "AIzaSyDPb3skjAhz4k6Aj-fcGCaEuwGi_WGPNYM",
+            authDomain: "canli-yayin-takip-bc275.firebaseapp.com",
+            projectId: "canli-yayin-takip-bc275",
+            storageBucket: "canli-yayin-takip-bc275.firebasestorage.app",
+            messagingSenderId: "359467075815",
+            appId: "1:359467075815:web:b4703ff23efa1c4d35ba42",
+            measurementId: "G-14QCP34DX9"
+        };
+
+        var app = initializeApp(firebaseConfig);
+        var dbFirestore = getFirestore(app);
+        var ortakDocRef = doc(dbFirestore, FIRESTORE_KOLEKSIYON, FIRESTORE_DOKUMAN);
+
+        var MASRAF_KALEMLERI = [
+            "Yemek",
+            "Yol",
+            "Yakıt",
+            "Konaklama",
+            "Otoyol",
+            "Market",
+            "Teknik Ekipman",
+            "Diğer"
+        ];
+        var IL_KOORDINATLARI = {
+            "Adana": [37.0000, 35.3213], "Adıyaman": [37.7648, 38.2786], "Afyonkarahisar": [38.7507, 30.5567],
+            "Ağrı": [39.7191, 43.0503], "Aksaray": [38.3687, 34.0370], "Amasya": [40.6499, 35.8353],
+            "Ankara": [39.9334, 32.8597], "Antalya": [36.8969, 30.7133], "Ardahan": [41.1105, 42.7022],
+            "Artvin": [41.1828, 41.8183], "Aydın": [37.8560, 27.8416], "Balıkesir": [39.6484, 27.8826],
+            "Bartın": [41.6344, 32.3375], "Batman": [37.8812, 41.1351], "Bayburt": [40.2552, 40.2249],
+            "Bilecik": [40.1426, 29.9793], "Bingöl": [38.8854, 40.4983], "Bitlis": [38.4006, 42.1095],
+            "Bolu": [40.7392, 31.6089], "Burdur": [37.7203, 30.2908], "Bursa": [40.1885, 29.0610],
+            "Çanakkale": [40.1553, 26.4142], "Çankırı": [40.6013, 33.6134], "Çorum": [40.5506, 34.9556],
+            "Denizli": [37.7765, 29.0864], "Diyarbakır": [37.9144, 40.2306], "Düzce": [40.8438, 31.1565],
+            "Edirne": [41.6818, 26.5623], "Elazığ": [38.6810, 39.2264], "Erzincan": [39.7500, 39.5000],
+            "Erzurum": [39.9000, 41.2700], "Eskişehir": [39.7767, 30.5206], "Gaziantep": [37.0662, 37.3833],
+            "Giresun": [40.9128, 38.3895], "Gümüşhane": [40.4603, 39.4814], "Hakkari": [37.5833, 43.7333],
+            "Hatay": [36.4018, 36.3498], "Iğdır": [39.9237, 44.0450], "Isparta": [37.7648, 30.5566],
+            "İstanbul": [41.0082, 28.9784], "İzmir": [38.4237, 27.1428], "Kahramanmaraş": [37.5858, 36.9371],
+            "Karabük": [41.2061, 32.6204], "Karaman": [37.1759, 33.2287], "Kars": [40.6013, 43.0975],
+            "Kastamonu": [41.3887, 33.7827], "Kayseri": [38.7312, 35.4787], "Kırıkkale": [39.8468, 33.5153],
+            "Kırklareli": [41.7333, 27.2167], "Kırşehir": [39.1425, 34.1709], "Kilis": [36.7184, 37.1212],
+            "Kocaeli": [40.8533, 29.8815], "Konya": [37.8746, 32.4932], "Kütahya": [39.4242, 29.9833],
+            "Malatya": [38.3552, 38.3095], "Manisa": [38.6191, 27.4289], "Mardin": [37.3212, 40.7245],
+            "Mersin": [36.8000, 34.6333], "Muğla": [37.2153, 28.3636], "Muş": [38.9462, 41.7539],
+            "Nevşehir": [38.6939, 34.6857], "Niğde": [37.9667, 34.6833], "Ordu": [40.9839, 37.8764],
+            "Osmaniye": [37.0742, 36.2476], "Rize": [41.0201, 40.5234], "Sakarya": [40.7569, 30.3781],
+            "Samsun": [41.2867, 36.3300], "Siirt": [37.9333, 41.9500], "Sinop": [42.0231, 35.1531],
+            "Sivas": [39.7477, 37.0179], "Şanlıurfa": [37.1591, 38.7969], "Şırnak": [37.4187, 42.4918],
+            "Tekirdağ": [40.9833, 27.5167], "Tokat": [40.3167, 36.5500], "Trabzon": [41.0027, 39.7168],
+            "Tunceli": [39.1079, 39.5401], "Uşak": [38.6823, 29.4082], "Van": [38.4891, 43.4089],
+            "Yalova": [40.6500, 29.2667], "Yozgat": [39.8181, 34.8147], "Zonguldak": [41.4564, 31.7987]
+        };
+        var ILLER = Object.keys(IL_KOORDINATLARI).sort(function (a, b) {
+            return a.localeCompare(b, "tr");
+        });
+        var AYLAR = {
+            "01": "Ocak", "02": "Şubat", "03": "Mart", "04": "Nisan",
+            "05": "Mayıs", "06": "Haziran", "07": "Temmuz", "08": "Ağustos",
+            "09": "Eylül", "10": "Ekim", "11": "Kasım", "12": "Aralık"
+        };
+
+        var seciliAyKodu = "11";
+        var aktifDonem = "2026-11";
+        var kayitListesiDonemi = "2026-11";
+        var taslakIs = null;
+        var acikMasrafIndex = null;
+        var oncekiPersonelSecimi = "";
+        var bulutVeriOnbellek = null;
+        var yerelYazimAtla = false;
+
+        function bulutDurumuGuncelle(metin, durumSinifi) {
+            var el = document.getElementById("bulutDurumEtiket");
+            if (!el) return;
+            el.textContent = metin;
+            el.className = "bulut-durum" + (durumSinifi ? (" " + durumSinifi) : "");
+        }
+
+        function mesafeHesaplaKm(cikis, bitis) {
+            if (!cikis || !bitis) return null;
+            if (cikis === bitis) return 0;
+            var k1 = IL_KOORDINATLARI[cikis];
+            var k2 = IL_KOORDINATLARI[bitis];
+            if (!k1 || !k2) return null;
+
+            var R = 6371;
+            var dLat = (k2[0] - k1[0]) * Math.PI / 180;
+            var dLon = (k2[1] - k1[1]) * Math.PI / 180;
+            var lat1 = k1[0] * Math.PI / 180;
+            var lat2 = k2[0] * Math.PI / 180;
+
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1) * Math.cos(lat2) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return Math.round(R * c * 1.24);
+        }
+
+        function mesafeGostergeyiGuncelle() {
+            var cikis = document.getElementById("cikisIli").value;
+            var bitis = document.getElementById("bitisIli").value;
+            var km = mesafeHesaplaKm(cikis, bitis);
+            var el = document.getElementById("mesafeKmGosterge");
+            if (km === null) {
+                el.value = "";
+                return null;
+            }
+            el.value = km + " km";
+            return km;
+        }
+
+        function bugunTarihStr() {
+            var d = new Date();
+            var y = d.getFullYear();
+            var m = String(d.getMonth() + 1).padStart(2, "0");
+            var g = String(d.getDate()).padStart(2, "0");
+            return y + "-" + m + "-" + g;
+        }
+
+        function secenekleriDoldur() {
+            var cikis = document.getElementById("cikisIli");
+            var bitis = document.getElementById("bitisIli");
+            cikis.innerHTML = "";
+            bitis.innerHTML = "";
+
+            var bosCikis = document.createElement("option");
+            bosCikis.value = "";
+            bosCikis.textContent = "";
+            cikis.appendChild(bosCikis);
+
+            var bosBitis = document.createElement("option");
+            bosBitis.value = "";
+            bosBitis.textContent = "";
+            bitis.appendChild(bosBitis);
+
+            for (var i = 0; i < ILLER.length; i++) {
+                var opt1 = document.createElement("option");
+                opt1.value = ILLER[i];
+                opt1.textContent = ILLER[i];
+                cikis.appendChild(opt1);
+
+                var opt2 = document.createElement("option");
+                opt2.value = ILLER[i];
+                opt2.textContent = ILLER[i];
+                bitis.appendChild(opt2);
+            }
+
+            var masrafSec = document.getElementById("masrafKalemiSec");
+            var icerikSec = document.getElementById("icerikKalemSec");
+            masrafSec.innerHTML = "";
+            icerikSec.innerHTML = "";
+            for (var m = 0; m < MASRAF_KALEMLERI.length; m++) {
+                var optM = document.createElement("option");
+                optM.value = MASRAF_KALEMLERI[m];
+                optM.textContent = MASRAF_KALEMLERI[m];
+                masrafSec.appendChild(optM);
+
+                var optI = document.createElement("option");
+                optI.value = MASRAF_KALEMLERI[m];
+                optI.textContent = MASRAF_KALEMLERI[m];
+                icerikSec.appendChild(optI);
+            }
+        }
+
+        function yerelVeriOku() {
+            try {
+                var ham = localStorage.getItem(DEPO_ANAHTARI);
+                return ham ? JSON.parse(ham) : {};
+            } catch (err) {
+                return {};
+            }
+        }
+
+        function yerelVeriYaz(veri) {
+            try {
+                localStorage.setItem(DEPO_ANAHTARI, JSON.stringify(veri));
+            } catch (err) {
+                // Tarayıcı depolama hatası sessiz geçilir
+            }
+        }
+
+        function veriyiOku() {
+            if (bulutVeriOnbellek && typeof bulutVeriOnbellek === "object") {
+                return bulutVeriOnbellek;
+            }
+            return yerelVeriOku();
+        }
+
+        function veriyiYaz(veri) {
+            var temizVeri = (veri && typeof veri === "object") ? veri : {};
+            bulutVeriOnbellek = temizVeri;
+            yerelVeriYaz(temizVeri);
+
+            if (yerelYazimAtla) return;
+
+            bulutDurumuGuncelle("Buluta kaydediliyor...", "uyari");
+            setDoc(ortakDocRef, {
+                donemler: temizVeri,
+                guncellenmeZamani: new Date().toISOString()
+            }, { merge: true }).then(function () {
+                bulutDurumuGuncelle("Bulut ile senkronize", "bagli");
+            }).catch(function (err) {
+                console.error("Firestore yazma hatası:", err);
+                bulutDurumuGuncelle("Bulut yazma hatası (Yerel kayıtlı)", "uyari");
+            });
+        }
+
+        function bulutDinleyicisiniBaslat() {
+            var yerelIlk = yerelVeriOku();
+            if (Object.keys(yerelIlk).length > 0 && !bulutVeriOnbellek) {
+                bulutVeriOnbellek = yerelIlk;
+            }
+
+            onSnapshot(ortakDocRef, function (snap) {
+                var veri = {};
+                if (snap.exists()) {
+                    var data = snap.data() || {};
+                    if (data.donemler && typeof data.donemler === "object") {
+                        veri = data.donemler;
+                    }
+                } else if (Object.keys(yerelIlk).length > 0) {
+                    veri = yerelIlk;
+                    setDoc(ortakDocRef, {
+                        donemler: yerelIlk,
+                        guncellenmeZamani: new Date().toISOString()
+                    }, { merge: true }).catch(function () {});
+                }
+
+                bulutVeriOnbellek = veri;
+                yerelVeriYaz(veri);
+                bulutDurumuGuncelle("Bulut ile senkronize", "bagli");
+
+                if (taslakIs && taslakIs.id) {
+                    var guncelListe = veri[aktifDonem] || [];
+                    for (var i = 0; i < guncelListe.length; i++) {
+                        if (guncelListe[i].id === taslakIs.id) {
+                            var aktifEtkin = document.activeElement;
+                            var kullaniciYaziyor = aktifEtkin && (
+                                aktifEtkin.tagName === "INPUT" ||
+                                aktifEtkin.tagName === "SELECT" ||
+                                aktifEtkin.tagName === "TEXTAREA"
+                            );
+                            if (!kullaniciYaziyor) {
+                                taslakIs = JSON.parse(JSON.stringify(guncelListe[i]));
+                                if (!taslakIs.masraflar) taslakIs.masraflar = [];
+                                isBasliklariniGuncelle(taslakIs);
+                                masraflariYenile();
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                donemListesiVeOzetleriGuncelle();
+                tumKaydedilmisMasraflariListele();
+            }, function (err) {
+                console.error("Firestore dinleme hatası:", err);
+                bulutDurumuGuncelle("Çevrimdışı / Bağlantı bekleniyor", "uyari");
+            });
+        }
+
+        function donemAdiGetir(donemStr) {
+            if (!donemStr) return "-";
+            var parcalar = donemStr.split("-");
+            return (AYLAR[parcalar[1]] || parcalar[1]) + " " + parcalar[0];
+        }
+
+        function aySekmesiniSec(ayKodu) {
+            seciliAyKodu = ayKodu;
+            var ayButonlari = document.querySelectorAll("#aySekmeleri .ay-sekme");
+            for (var j = 0; j < ayButonlari.length; j++) {
+                ayButonlari[j].classList.toggle("secili", ayButonlari[j].getAttribute("data-ay") === ayKodu);
+            }
+        }
+
+        function kayitDonemSecicisiniSenkronizeEt(donemStr) {
+            if (!donemStr) return;
+            kayitListesiDonemi = donemStr;
+            var parcalar = donemStr.split("-");
+            document.getElementById("kayitYilSec").value = parcalar[0] || "2026";
+            document.getElementById("kayitAySec").value = parcalar[1] || "11";
+            document.getElementById("donemEtiketi5").textContent = donemAdiGetir(kayitListesiDonemi);
+            document.getElementById("kayitlarBaslik5").textContent = donemAdiGetir(kayitListesiDonemi) + " Ayında Kaydedilen İşler ve Masrafları";
+        }
+
+        function aktifEkranNumarasiniBul() {
+            for (var e = 1; e <= 5; e++) {
+                if (document.getElementById("ekran" + e).classList.contains("aktif")) {
+                    return e;
+                }
+            }
+            return 1;
+        }
+
+        function ekranGoster(no) {
+            var cubuk = document.getElementById("adimCubugu");
+            if (no === 1) {
+                cubuk.className = "adim-cubugu";
+            } else {
+                cubuk.className = "adim-cubugu gorunur";
+            }
+
+            for (var i = 1; i <= 5; i++) {
+                var ekran = document.getElementById("ekran" + i);
+                var rozet = document.getElementById("rozet" + i);
+                if (i === no) {
+                    ekran.className = "ekran aktif";
+                    rozet.className = "adim-rozet aktif";
+                } else if (i < no) {
+                    ekran.className = "ekran";
+                    rozet.className = "adim-rozet tamam";
+                } else {
+                    ekran.className = "ekran";
+                    rozet.className = "adim-rozet";
+                }
+            }
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function donemEtiketleriniGuncelle() {
+            var yazi = donemAdiGetir(aktifDonem);
+            document.getElementById("donemEtiketi2").textContent = yazi;
+            document.getElementById("donemEtiketi3").textContent = yazi;
+            document.getElementById("donemEtiketi4").textContent = yazi;
+            kayitDonemSecicisiniSenkronizeEt(aktifDonem);
+        }
+
+        function isBasliklariniGuncelle(isObj) {
+            var parcalar = [];
+            if (isObj && isObj.aracPlakasi) parcalar.push("Plaka: " + isObj.aracPlakasi);
+            if (isObj && isObj.isBilgisi) parcalar.push("İş: " + isObj.isBilgisi);
+            if (isObj && (isObj.cikisIli || isObj.bitisIli)) {
+                var mesafeEk = (typeof isObj.mesafeKm === "number") ? " (" + isObj.mesafeKm + " km)" : "";
+                parcalar.push((isObj.cikisIli || "-") + " -> " + (isObj.bitisIli || "-") + mesafeEk);
+            }
+            if (isObj && isObj.personel) parcalar.push("Personel: " + isObj.personel);
+            var metin = parcalar.join(" | ");
+            document.getElementById("ozetIsBaslik3").textContent = metin;
+            document.getElementById("ozetIsBaslik4").textContent = metin;
+        }
+
+        function formAlanlariniTaslaklaDoldur(isObj) {
+            document.getElementById("aracPlakasi").value = isObj.aracPlakasi || "";
+            document.getElementById("cikisIli").value = isObj.cikisIli || "";
+            document.getElementById("bitisIli").value = isObj.bitisIli || "";
+            document.getElementById("gidisTarihi").value = isObj.gidisTarihi || "";
+            document.getElementById("donusTarihi").value = isObj.donusTarihi || "";
+            document.getElementById("isBilgisi").value = isObj.isBilgisi || "";
+            document.getElementById("personelSecimi").value = isObj.personel || "";
+            oncekiPersonelSecimi = isObj.personel || "";
+            var km = mesafeHesaplaKm(isObj.cikisIli || "", isObj.bitisIli || "");
+            document.getElementById("mesafeKmGosterge").value = km === null ? "" : (km + " km");
+        }
+
+        function icerikPaneliniKapat() {
+            acikMasrafIndex = null;
+            document.getElementById("masrafIcerikPaneli").style.display = "none";
+        }
+
+        function yeniTaslakSifirla() {
+            taslakIs = {
+                id: null,
+                aracPlakasi: "",
+                cikisIli: "",
+                bitisIli: "",
+                mesafeKm: null,
+                gidisTarihi: "",
+                donusTarihi: "",
+                isBilgisi: "",
+                personel: "",
+                masraflar: []
+            };
+            oncekiPersonelSecimi = "";
+            icerikPaneliniKapat();
+            formAlanlariniTaslaklaDoldur(taslakIs);
+            document.getElementById("masrafYapanInput").value = "";
+            isBasliklariniGuncelle(taslakIs);
+            masraflariYenile();
+        }
+
+        function taslakKaydaDegerMi(isObj) {
+            if (!isObj) return false;
+            var adVar = Boolean(isObj.isBilgisi && isObj.isBilgisi.trim() !== "");
+            var tarihVar = Boolean(isObj.gidisTarihi || isObj.donusTarihi);
+            var masrafVar = Boolean(isObj.masraflar && isObj.masraflar.length > 0);
+            var secimVar = Boolean(isObj.aracPlakasi || isObj.cikisIli || isObj.bitisIli || isObj.personel);
+            return adVar || tarihVar || masrafVar || secimVar;
+        }
+
+        function toplamMasrafHesapla(masraflar) {
+            var toplam = 0;
+            if (!masraflar) return 0;
+            for (var i = 0; i < masraflar.length; i++) {
+                toplam += Number(masraflar[i].tutar || 0);
+            }
+            return toplam;
+        }
+
+        function masraflariYenile() {
+            var liste = (taslakIs && taslakIs.masraflar) ? taslakIs.masraflar : [];
+            var toplamStr = toplamMasrafHesapla(liste).toFixed(2) + " TL";
+            document.getElementById("isToplamMasrafEtiket3").textContent = toplamStr;
+            document.getElementById("isToplamMasrafEtiket4").textContent = toplamStr;
+
+            var tbody3 = document.getElementById("masrafTablosuGovde");
+            tbody3.innerHTML = "";
+
+            var tbody4 = document.getElementById("yapilanMasraflarTablosu");
+            tbody4.innerHTML = "";
+
+            if (liste.length === 0) {
+                tbody3.innerHTML = '<tr><td colspan="5" class="bos-uyari">Henüz eklenmiş masraf bulunmuyor.</td></tr>';
+                tbody4.innerHTML = '<tr><td colspan="6" class="bos-uyari">Bu iş için henüz yapılan masraf kaydı bulunmuyor.</td></tr>';
+                icerikPaneliniKapat();
+                return;
+            }
+
+            if (acikMasrafIndex !== null && !liste[acikMasrafIndex]) {
+                icerikPaneliniKapat();
+            }
+
+            for (var i = 0; i < liste.length; i++) {
+                var m = liste[i];
+                if (!m.tarih) m.tarih = bugunTarihStr();
+                if (!m.yapan) m.yapan = (taslakIs && taslakIs.personel) ? taslakIs.personel : "";
+
+                var satir3 = document.createElement("tr");
+
+                var tdTur3 = document.createElement("td");
+                var selTur = document.createElement("select");
+                var mevcutTurler = MASRAF_KALEMLERI.slice();
+                if (m.tur && mevcutTurler.indexOf(m.tur) === -1) mevcutTurler.push(m.tur);
+                for (var t = 0; t < mevcutTurler.length; t++) {
+                    var opt = document.createElement("option");
+                    opt.value = mevcutTurler[t];
+                    opt.textContent = mevcutTurler[t];
+                    if (mevcutTurler[t] === m.tur) opt.selected = true;
+                    selTur.appendChild(opt);
+                }
+                (function (idx, sEl) {
+                    sEl.addEventListener("change", function () {
+                        taslakIs.masraflar[idx].tur = sEl.value;
+                        aktifIsiKaydet(true);
+                        donemListesiVeOzetleriGuncelle();
+                        tumKaydedilmisMasraflariListele();
+                    });
+                })(i, selTur);
+                tdTur3.appendChild(selTur);
+
+                var tdYapan3 = document.createElement("td");
+                var inpYapan3 = document.createElement("input");
+                inpYapan3.type = "text";
+                inpYapan3.setAttribute("list", "personelOneriListesi");
+                inpYapan3.value = m.yapan || "";
+                (function (idx, yEl) {
+                    yEl.addEventListener("change", function () {
+                        taslakIs.masraflar[idx].yapan = yEl.value.trim();
+                        aktifIsiKaydet(true);
+                        tumKaydedilmisMasraflariListele();
+                    });
+                    yEl.addEventListener("blur", function () {
+                        taslakIs.masraflar[idx].yapan = yEl.value.trim();
+                        aktifIsiKaydet(true);
+                        tumKaydedilmisMasraflariListele();
+                    });
+                })(i, inpYapan3);
+                tdYapan3.appendChild(inpYapan3);
+
+                var tdTutar3 = document.createElement("td");
+                var inpTutar = document.createElement("input");
+                inpTutar.type = "number";
+                inpTutar.step = "0.01";
+                inpTutar.min = "0";
+                inpTutar.value = Number(m.tutar || 0);
+                (function (idx, iEl) {
+                    iEl.addEventListener("input", function () {
+                        var raw = iEl.value.trim();
+                        var val = raw === "" ? 0 : parseFloat(raw);
+                        taslakIs.masraflar[idx].tutar = isNaN(val) || val < 0 ? 0 : val;
+                        yerelYazimAtla = true;
+                        aktifIsiKaydet(false);
+                        yerelYazimAtla = false;
+                        var guncelStr = toplamMasrafHesapla(taslakIs.masraflar).toFixed(2) + " TL";
+                        document.getElementById("isToplamMasrafEtiket3").textContent = guncelStr;
+                        document.getElementById("isToplamMasrafEtiket4").textContent = guncelStr;
+                    });
+                    iEl.addEventListener("blur", function () {
+                        iEl.value = Number(taslakIs.masraflar[idx].tutar || 0);
+                        aktifIsiKaydet(true);
+                        donemListesiVeOzetleriGuncelle();
+                        tumKaydedilmisMasraflariListele();
+                    });
+                })(i, inpTutar);
+                tdTutar3.appendChild(inpTutar);
+
+                var tdNot3 = document.createElement("td");
+                var inpNot = document.createElement("input");
+                inpNot.type = "text";
+                inpNot.value = m.aciklama || "";
+                (function (idx, nEl) {
+                    nEl.addEventListener("change", function () {
+                        taslakIs.masraflar[idx].aciklama = nEl.value.trim();
+                        aktifIsiKaydet(true);
+                        tumKaydedilmisMasraflariListele();
+                    });
+                    nEl.addEventListener("blur", function () {
+                        taslakIs.masraflar[idx].aciklama = nEl.value.trim();
+                        aktifIsiKaydet(true);
+                        tumKaydedilmisMasraflariListele();
+                    });
+                })(i, inpNot);
+                tdNot3.appendChild(inpNot);
+
+                var tdIslem3 = document.createElement("td");
+                var btnSil3 = document.createElement("button");
+                btnSil3.type = "button";
+                btnSil3.className = "btn-sil";
+                btnSil3.textContent = "Sil";
+                (function (idx) {
+                    btnSil3.addEventListener("click", function () {
+                        if (confirm("Bu masraf kalemi silinecektir. Emin misiniz?")) {
+                            taslakIs.masraflar.splice(idx, 1);
+                            if (acikMasrafIndex === idx) {
+                                icerikPaneliniKapat();
+                            } else if (acikMasrafIndex !== null && acikMasrafIndex > idx) {
+                                acikMasrafIndex--;
+                            }
+                            aktifIsiKaydet(true);
+                            donemListesiVeOzetleriGuncelle();
+                            tumKaydedilmisMasraflariListele();
+                        }
+                    });
+                })(i);
+                tdIslem3.appendChild(btnSil3);
+
+                satir3.appendChild(tdTur3);
+                satir3.appendChild(tdYapan3);
+                satir3.appendChild(tdTutar3);
+                satir3.appendChild(tdNot3);
+                satir3.appendChild(tdIslem3);
+                tbody3.appendChild(satir3);
+
+                var satir4 = document.createElement("tr");
+
+                var tdTur4 = document.createElement("td");
+                tdTur4.innerHTML = "<strong>" + (m.tur || "-") + "</strong>";
+
+                var tdYapan4 = document.createElement("td");
+                tdYapan4.textContent = m.yapan || "-";
+
+                var tdTutar4 = document.createElement("td");
+                tdTutar4.textContent = Number(m.tutar || 0).toFixed(2) + " TL";
+
+                var tdTarih4 = document.createElement("td");
+                tdTarih4.textContent = m.tarih;
+
+                var tdNot4 = document.createElement("td");
+                tdNot4.textContent = m.aciklama || "-";
+
+                var tdIslem4 = document.createElement("td");
+                var btnDuzenle4 = document.createElement("button");
+                btnDuzenle4.type = "button";
+                btnDuzenle4.className = "btn-ikincil";
+                btnDuzenle4.textContent = "Düzenle";
+                (function (idx) {
+                    btnDuzenle4.addEventListener("click", function () {
+                        masrafIceriginiAc(idx);
+                    });
+                })(i);
+                tdIslem4.appendChild(btnDuzenle4);
+
+                satir4.appendChild(tdTur4);
+                satir4.appendChild(tdYapan4);
+                satir4.appendChild(tdTutar4);
+                satir4.appendChild(tdTarih4);
+                satir4.appendChild(tdNot4);
+                satir4.appendChild(tdIslem4);
+                tbody4.appendChild(satir4);
+            }
+        }
+
+        function masrafIceriginiAc(index) {
+            if (!taslakIs || !taslakIs.masraflar[index]) return;
+            acikMasrafIndex = index;
+            var kalem = taslakIs.masraflar[index];
+
+            var sel = document.getElementById("icerikKalemSec");
+            if (kalem.tur && Array.prototype.slice.call(sel.options).every(function (o) { return o.value !== kalem.tur; })) {
+                var optYeni = document.createElement("option");
+                optYeni.value = kalem.tur;
+                optYeni.textContent = kalem.tur;
+                sel.appendChild(optYeni);
+            }
+            sel.value = kalem.tur || MASRAF_KALEMLERI[0];
+            document.getElementById("icerikYapanInput").value = kalem.yapan || taslakIs.personel || "";
+            document.getElementById("icerikFiyatInput").value = Number(kalem.tutar || 0);
+            document.getElementById("icerikTarihInput").value = kalem.tarih || bugunTarihStr();
+            document.getElementById("icerikAciklamaInput").value = kalem.aciklama || "";
+            document.getElementById("masrafIcerikPaneli").style.display = "block";
+        }
+
+        function aktifIsiKaydet(tabloYenile, hedefDonem) {
+            if (!taslakIs) return;
+            var kayitDonemi = hedefDonem || aktifDonem;
+            var toplamStr = toplamMasrafHesapla(taslakIs.masraflar).toFixed(2) + " TL";
+            document.getElementById("isToplamMasrafEtiket3").textContent = toplamStr;
+            document.getElementById("isToplamMasrafEtiket4").textContent = toplamStr;
+
+            if (!taslakKaydaDegerMi(taslakIs)) {
+                if (tabloYenile) masraflariYenile();
+                return;
+            }
+
+            var mevcutVeri = veriyiOku();
+            var db = JSON.parse(JSON.stringify(mevcutVeri || {}));
+            if (!db[kayitDonemi]) db[kayitDonemi] = [];
+
+            if (!taslakIs.id) {
+                taslakIs.id = Date.now() + Math.floor(Math.random() * 1000);
+                db[kayitDonemi].push(taslakIs);
+            } else {
+                var bulundu = false;
+                for (var i = 0; i < db[kayitDonemi].length; i++) {
+                    if (db[kayitDonemi][i].id === taslakIs.id) {
+                        db[kayitDonemi][i] = taslakIs;
+                        bulundu = true;
+                        break;
+                    }
+                }
+                if (!bulundu) db[kayitDonemi].push(taslakIs);
+            }
+
+            veriyiYaz(db);
+
+            if (tabloYenile) {
+                masraflariYenile();
+            }
+        }
+
+        function isiSil(isId, hedefDonem) {
+            if (!confirm("Bu iş kaydı ve tüm masrafları silinecektir. Emin misiniz?")) return;
+            var silinecekDonem = hedefDonem || aktifDonem;
+            var db = JSON.parse(JSON.stringify(veriyiOku() || {}));
+            var liste = db[silinecekDonem] || [];
+            db[silinecekDonem] = liste.filter(function (item) {
+                return item.id !== isId;
+            });
+            veriyiYaz(db);
+            if (taslakIs && taslakIs.id === isId) {
+                yeniTaslakSifirla();
+            }
+            donemListesiVeOzetleriGuncelle();
+            tumKaydedilmisMasraflariListele();
+        }
+
+        function isiDuzenlemeyeAc(isObj, hedefEkran, seciliMasrafIdx, aitOlduguDonem) {
+            if (aitOlduguDonem) {
+                aktifDonem = aitOlduguDonem;
+                var parcalar = aitOlduguDonem.split("-");
+                document.getElementById("seciliYil").value = parcalar[0] || "2026";
+                aySekmesiniSec(parcalar[1] || "11");
+                donemEtiketleriniGuncelle();
+            }
+
+            taslakIs = JSON.parse(JSON.stringify(isObj));
+            if (!taslakIs.masraflar) taslakIs.masraflar = [];
+            var km = mesafeHesaplaKm(taslakIs.cikisIli || "", taslakIs.bitisIli || "");
+            if (km !== null) taslakIs.mesafeKm = km;
+            icerikPaneliniKapat();
+            formAlanlariniTaslaklaDoldur(taslakIs);
+            document.getElementById("masrafYapanInput").value = taslakIs.personel || "";
+            isBasliklariniGuncelle(taslakIs);
+            masraflariYenile();
+            ekranGoster(hedefEkran || 2);
+            if (hedefEkran === 3) {
+                document.getElementById("masrafFiyati").focus();
+            }
+            if (typeof seciliMasrafIdx === "number" && taslakIs.masraflar[seciliMasrafIdx]) {
+                masrafIceriginiAc(seciliMasrafIdx);
+            }
+        }
+
+        function donemListesiVeOzetleriGuncelle() {
+            var db = veriyiOku();
+            var isler = db[aktifDonem] || [];
+            var seciliFiltre = document.getElementById("filtrePlaka").value;
+
+            var listeAlani = document.getElementById("donemIsListesi");
+            var ilOzetiAlani = document.getElementById("ilMasrafOzeti");
+            var plakaOzetiAlani = document.getElementById("plakaMasrafOzeti");
+
+            var ilToplamlari = {};
+            var plakaToplamlari = {};
+
+            listeAlani.innerHTML = "";
+            ilOzetiAlani.innerHTML = "";
+            plakaOzetiAlani.innerHTML = "";
+
+            if (isler.length === 0) {
+                listeAlani.innerHTML = '<p class="bos-uyari">Bu ay için henüz kayıtlı iş bulunmuyor.</p>';
+                ilOzetiAlani.innerHTML = '<p class="bos-uyari">Henüz masraf verisi bulunmuyor.</p>';
+                plakaOzetiAlani.innerHTML = '<p class="bos-uyari">Henüz masraf verisi bulunmuyor.</p>';
+                return;
+            }
+
+            var gorunenSayisi = 0;
+            for (var i = 0; i < isler.length; i++) {
+                var item = isler[i];
+                var toplamMasraf = toplamMasrafHesapla(item.masraflar);
+
+                if (item.cikisIli) {
+                    ilToplamlari[item.cikisIli] = (ilToplamlari[item.cikisIli] || 0) + toplamMasraf;
+                }
+                if (item.aracPlakasi) {
+                    plakaToplamlari[item.aracPlakasi] = (plakaToplamlari[item.aracPlakasi] || 0) + toplamMasraf;
+                }
+
+                if (seciliFiltre !== "TUMU" && (item.aracPlakasi || "") !== seciliFiltre) {
+                    continue;
+                }
+                gorunenSayisi++;
+
+                var km = (typeof item.mesafeKm === "number") ? item.mesafeKm : mesafeHesaplaKm(item.cikisIli || "", item.bitisIli || "");
+                var mesafeMetni = (km !== null) ? (km + " km") : "-";
+                var tarihSatiri = (item.gidisTarihi || "-") + " -> " + (item.donusTarihi || "-");
+                var guzergahSatiri = (item.cikisIli || "-") + " -> " + (item.bitisIli || "-");
+
+                var kart = document.createElement("div");
+                kart.className = "is-karti";
+
+                var icerikDiv = document.createElement("div");
+                icerikDiv.innerHTML =
+                    "<h3>" + (item.isBilgisi || "İsimsiz İş") + "</h3>" +
+                    "<p><strong>Plaka:</strong> " + (item.aracPlakasi || "-") + " | <strong>Personel:</strong> " + (item.personel || "-") + "</p>" +
+                    "<p><strong>Çıkış -> Bitiş İli:</strong> " + guzergahSatiri + " (" + mesafeMetni + ")</p>" +
+                    "<p><strong>Tarih Aralığı:</strong> " + tarihSatiri + "</p>" +
+                    "<p><strong>Toplam Masraf:</strong> " + toplamMasraf.toFixed(2) + " TL</p>";
+
+                var aksiyonDiv = document.createElement("div");
+                aksiyonDiv.className = "kart-aksiyonlar";
+
+                var btnDuzenle = document.createElement("button");
+                btnDuzenle.type = "button";
+                btnDuzenle.className = "btn-ikincil";
+                btnDuzenle.textContent = "Düzenle";
+                (function (seciliKayit, donemKodu) {
+                    btnDuzenle.addEventListener("click", function () {
+                        isiDuzenlemeyeAc(seciliKayit, 2, null, donemKodu);
+                    });
+                })(item, aktifDonem);
+
+                var btnSil = document.createElement("button");
+                btnSil.type = "button";
+                btnSil.className = "btn-sil";
+                btnSil.textContent = "Sil";
+                (function (kayitId, donemKodu) {
+                    btnSil.addEventListener("click", function () {
+                        isiSil(kayitId, donemKodu);
+                    });
+                })(item.id, aktifDonem);
+
+                aksiyonDiv.appendChild(btnDuzenle);
+                aksiyonDiv.appendChild(btnSil);
+                kart.appendChild(icerikDiv);
+                kart.appendChild(aksiyonDiv);
+                listeAlani.appendChild(kart);
+            }
+
+            if (gorunenSayisi === 0) {
+                listeAlani.innerHTML = '<p class="bos-uyari">Seçili araç plakasına ait iş kaydı bulunmuyor.</p>';
+            }
+
+            var plakalarSirali = Object.keys(plakaToplamlari).sort(function (a, b) {
+                return a.localeCompare(b, "tr");
+            });
+            if (plakalarSirali.length === 0) {
+                plakaOzetiAlani.innerHTML = '<p class="bos-uyari">Plaka seçilmiş masraf kaydı bulunmuyor.</p>';
+            } else {
+                for (var p = 0; p < plakalarSirali.length; p++) {
+                    var pl = plakalarSirali[p];
+                    var pKutu = document.createElement("div");
+                    pKutu.className = "ozet-kutu";
+                    pKutu.innerHTML =
+                        '<div class="il-adi">' + pl + "</div>" +
+                        '<div class="il-tutar">' + plakaToplamlari[pl].toFixed(2) + " TL</div>";
+                    plakaOzetiAlani.appendChild(pKutu);
+                }
+            }
+
+            var illerSirali = Object.keys(ilToplamlari).sort(function (a, b) {
+                return a.localeCompare(b, "tr");
+            });
+            if (illerSirali.length === 0) {
+                ilOzetiAlani.innerHTML = '<p class="bos-uyari">Çıkış ili seçilmiş masraf kaydı bulunmuyor.</p>';
+            } else {
+                for (var k = 0; k < illerSirali.length; k++) {
+                    var il = illerSirali[k];
+                    var iKutu = document.createElement("div");
+                    iKutu.className = "ozet-kutu";
+                    iKutu.innerHTML =
+                        '<div class="il-adi">' + il + "</div>" +
+                        '<div class="il-tutar">' + ilToplamlari[il].toFixed(2) + " TL</div>";
+                    ilOzetiAlani.appendChild(iKutu);
+                }
+            }
+        }
+
+        function tumKaydedilmisMasraflariListele() {
+            var hedefDonem = kayitListesiDonemi || aktifDonem;
+            kayitDonemSecicisiniSenkronizeEt(hedefDonem);
+
+            var db = veriyiOku();
+            var isler = db[hedefDonem] || [];
+            var tbody5 = document.getElementById("tumKaydedilmisMasraflarTablosu");
+            tbody5.innerHTML = "";
+            var genelToplam = 0;
+
+            if (isler.length === 0) {
+                tbody5.innerHTML = '<tr><td colspan="5" class="bos-uyari">' + donemAdiGetir(hedefDonem) + ' ayında kaydedilmiş iş veya masraf bulunmuyor.</td></tr>';
+                document.getElementById("donemGenelToplamMasrafEtiket").textContent = "0.00 TL";
+                return;
+            }
+
+            for (var i = 0; i < isler.length; i++) {
+                var isObj = isler[i];
+                var masraflar = isObj.masraflar || [];
+                var isToplami = toplamMasrafHesapla(masraflar);
+                genelToplam += isToplami;
+
+                var km = (typeof isObj.mesafeKm === "number") ? isObj.mesafeKm : mesafeHesaplaKm(isObj.cikisIli || "", isObj.bitisIli || "");
+                var mesafeMetni = (km !== null) ? (km + " km") : "-";
+
+                var satir = document.createElement("tr");
+
+                var tdIs = document.createElement("td");
+                var guzergahBilgi = (isObj.cikisIli || "-") + " -> " + (isObj.bitisIli || "-");
+                tdIs.innerHTML =
+                    "<strong>" + (isObj.isBilgisi || "İsimsiz İş") + "</strong>" +
+                    '<span class="alt-bilgi-satir">Çıkış - Bitiş İli: ' + guzergahBilgi + "</span>";
+
+                var tdMesafe = document.createElement("td");
+                tdMesafe.textContent = mesafeMetni;
+
+                var tdPlaka = document.createElement("td");
+                tdPlaka.textContent = isObj.aracPlakasi || "-";
+
+                var tdToplam = document.createElement("td");
+                tdToplam.innerHTML = "<strong>" + isToplami.toFixed(2) + " TL</strong>";
+
+                var tdAksiyon = document.createElement("td");
+                var aksiyonKapsayici = document.createElement("div");
+                aksiyonKapsayici.className = "aksiyon-hucre";
+
+                var btnGit = document.createElement("button");
+                btnGit.type = "button";
+                btnGit.className = "btn-ikincil";
+                btnGit.textContent = "İçeriğe Gir";
+                (function (seciliIs, donemKodu) {
+                    btnGit.addEventListener("click", function () {
+                        isiDuzenlemeyeAc(seciliIs, 4, null, donemKodu);
+                    });
+                })(isObj, hedefDonem);
+
+                var btnArti = document.createElement("button");
+                btnArti.type = "button";
+                btnArti.className = "btn-arti";
+                btnArti.title = "Bu işe yeni masraf ekle";
+                btnArti.setAttribute("aria-label", "Bu işe yeni masraf ekle");
+                btnArti.textContent = "+";
+                (function (seciliIs, donemKodu) {
+                    btnArti.addEventListener("click", function () {
+                        isiDuzenlemeyeAc(seciliIs, 3, null, donemKodu);
+                    });
+                })(isObj, hedefDonem);
+
+                aksiyonKapsayici.appendChild(btnGit);
+                aksiyonKapsayici.appendChild(btnArti);
+                tdAksiyon.appendChild(aksiyonKapsayici);
+
+                satir.appendChild(tdIs);
+                satir.appendChild(tdMesafe);
+                satir.appendChild(tdPlaka);
+                satir.appendChild(tdToplam);
+                satir.appendChild(tdAksiyon);
+                tbody5.appendChild(satir);
+            }
+
+            document.getElementById("donemGenelToplamMasrafEtiket").textContent = genelToplam.toFixed(2) + " TL";
+        }
+
+        function tarihAraligiGecerliMi() {
+            var gidis = document.getElementById("gidisTarihi").value;
+            var donus = document.getElementById("donusTarihi").value;
+            if (gidis && donus && donus < gidis) {
+                alert("Dönüş tarihi gidiş tarihinden önce olamaz.");
+                return false;
+            }
+            return true;
+        }
+
+        function sayfa2VerileriniTaslakYaz() {
+            if (!taslakIs) yeniTaslakSifirla();
+            taslakIs.aracPlakasi = document.getElementById("aracPlakasi").value;
+            taslakIs.cikisIli = document.getElementById("cikisIli").value;
+            taslakIs.bitisIli = document.getElementById("bitisIli").value;
+            taslakIs.mesafeKm = mesafeGostergeyiGuncelle();
+            taslakIs.gidisTarihi = document.getElementById("gidisTarihi").value;
+            taslakIs.donusTarihi = document.getElementById("donusTarihi").value;
+            taslakIs.isBilgisi = document.getElementById("isBilgisi").value.trim();
+            taslakIs.personel = document.getElementById("personelSecimi").value;
+            if (!document.getElementById("masrafYapanInput").value && taslakIs.personel) {
+                document.getElementById("masrafYapanInput").value = taslakIs.personel;
+            }
+            isBasliklariniGuncelle(taslakIs);
+        }
+
+        window.donemIleriGit = function () {
+            var yil = document.getElementById("seciliYil").value;
+            aktifDonem = yil + "-" + seciliAyKodu;
+            kayitListesiDonemi = aktifDonem;
+            document.getElementById("filtrePlaka").value = "TUMU";
+            donemEtiketleriniGuncelle();
+            yeniTaslakSifirla();
+            donemListesiVeOzetleriGuncelle();
+            tumKaydedilmisMasraflariListele();
+            ekranGoster(2);
+        };
+
+        function olayBaglantilariniKur() {
+            var ayButonlari = document.querySelectorAll("#aySekmeleri .ay-sekme");
+            for (var i = 0; i < ayButonlari.length; i++) {
+                ayButonlari[i].addEventListener("click", function () {
+                    aySekmesiniSec(this.getAttribute("data-ay"));
+                });
+            }
+
+            document.getElementById("kayitAySec").addEventListener("change", function () {
+                var yil = document.getElementById("kayitYilSec").value;
+                kayitListesiDonemi = yil + "-" + this.value;
+                tumKaydedilmisMasraflariListele();
+            });
+
+            document.getElementById("kayitYilSec").addEventListener("change", function () {
+                var ay = document.getElementById("kayitAySec").value;
+                kayitListesiDonemi = this.value + "-" + ay;
+                tumKaydedilmisMasraflariListele();
+            });
+
+            document.getElementById("cikisIli").addEventListener("change", function () {
+                var km = mesafeGostergeyiGuncelle();
+                if (taslakIs) {
+                    taslakIs.cikisIli = this.value;
+                    taslakIs.mesafeKm = km;
+                    isBasliklariniGuncelle(taslakIs);
+                }
+            });
+
+            document.getElementById("bitisIli").addEventListener("change", function () {
+                var km = mesafeGostergeyiGuncelle();
+                if (taslakIs) {
+                    taslakIs.bitisIli = this.value;
+                    taslakIs.mesafeKm = km;
+                    isBasliklariniGuncelle(taslakIs);
+                }
+            });
+
+            document.getElementById("personelSecimi").addEventListener("change", function () {
+                var yeniPersonel = this.value;
+                var yapanInput = document.getElementById("masrafYapanInput");
+                var mevcutYapan = yapanInput.value.trim();
+                if (!mevcutYapan || mevcutYapan === oncekiPersonelSecimi) {
+                    yapanInput.value = yeniPersonel;
+                }
+                oncekiPersonelSecimi = yeniPersonel;
+                if (taslakIs) {
+                    taslakIs.personel = yeniPersonel;
+                    isBasliklariniGuncelle(taslakIs);
+                }
+            });
+
+            var rozetler = document.querySelectorAll("#adimCubugu .adim-rozet");
+            for (var r = 0; r < rozetler.length; r++) {
+                rozetler[r].addEventListener("click", function () {
+                    var hedefNo = parseInt(this.getAttribute("data-hedef"), 10);
+                    if (isNaN(hedefNo)) return;
+                    if (hedefNo === 1) {
+                        ekranGoster(1);
+                        return;
+                    }
+                    var aktifEkranNo = aktifEkranNumarasiniBul();
+                    if (aktifEkranNo === 2) {
+                        if (!tarihAraligiGecerliMi()) return;
+                        sayfa2VerileriniTaslakYaz();
+                        aktifIsiKaydet(true);
+                    } else if (aktifEkranNo === 3 || aktifEkranNo === 4) {
+                        aktifIsiKaydet(true);
+                        icerikPaneliniKapat();
+                    }
+
+                    if (hedefNo === 2) {
+                        donemListesiVeOzetleriGuncelle();
+                    } else if (hedefNo === 5) {
+                        kayitListesiDonemi = aktifDonem;
+                        tumKaydedilmisMasraflariListele();
+                    }
+                    ekranGoster(hedefNo);
+                });
+            }
+
+            document.getElementById("btnDonemeDon").addEventListener("click", function () {
+                ekranGoster(1);
+            });
+
+            document.getElementById("btnYeniFormTemizle").addEventListener("click", function () {
+                yeniTaslakSifirla();
+            });
+
+            document.getElementById("filtrePlaka").addEventListener("change", function () {
+                donemListesiVeOzetleriGuncelle();
+            });
+
+            document.getElementById("btnSayfa2Ileri").addEventListener("click", function () {
+                if (!tarihAraligiGecerliMi()) return;
+                sayfa2VerileriniTaslakYaz();
+                aktifIsiKaydet(true);
+                ekranGoster(3);
+            });
+
+            document.getElementById("btnSayfa2TumMasraflar").addEventListener("click", function () {
+                if (!tarihAraligiGecerliMi()) return;
+                sayfa2VerileriniTaslakYaz();
+                aktifIsiKaydet(true);
+                kayitListesiDonemi = aktifDonem;
+                tumKaydedilmisMasraflariListele();
+                ekranGoster(5);
+            });
+
+            document.getElementById("btnSayfa3Geri").addEventListener("click", function () {
+                sayfa2VerileriniTaslakYaz();
+                aktifIsiKaydet(false);
+                donemListesiVeOzetleriGuncelle();
+                ekranGoster(2);
+            });
+
+            document.getElementById("btnSayfa3KayitlaraDon").addEventListener("click", function () {
+                aktifIsiKaydet(true);
+                kayitListesiDonemi = aktifDonem;
+                donemListesiVeOzetleriGuncelle();
+                tumKaydedilmisMasraflariListele();
+                ekranGoster(5);
+            });
+
+            document.getElementById("btnSayfa3Ileri").addEventListener("click", function () {
+                aktifIsiKaydet(true);
+                icerikPaneliniKapat();
+                ekranGoster(4);
+            });
+
+            document.getElementById("btnSayfa4Geri").addEventListener("click", function () {
+                aktifIsiKaydet(true);
+                icerikPaneliniKapat();
+                ekranGoster(3);
+            });
+
+            document.getElementById("btnSayfa4TumMasraflar").addEventListener("click", function () {
+                aktifIsiKaydet(true);
+                icerikPaneliniKapat();
+                kayitListesiDonemi = aktifDonem;
+                tumKaydedilmisMasraflariListele();
+                ekranGoster(5);
+            });
+
+            document.getElementById("btnMasrafOnayla").addEventListener("click", function () {
+                if (!taslakIs) yeniTaslakSifirla();
+                var tur = document.getElementById("masrafKalemiSec").value;
+                var yapan = document.getElementById("masrafYapanInput").value.trim() || taslakIs.personel || "";
+                var hamFiyat = parseFloat(document.getElementById("masrafFiyati").value);
+                if (isNaN(hamFiyat) || hamFiyat < 0) {
+                    alert("Lütfen geçerli bir fiyat (0 veya üzeri) girin.");
+                    return;
+                }
+                var aciklama = document.getElementById("masrafNotu").value.trim();
+
+                taslakIs.masraflar.push({
+                    tur: tur,
+                    yapan: yapan,
+                    tutar: hamFiyat,
+                    tarih: bugunTarihStr(),
+                    aciklama: aciklama
+                });
+
+                document.getElementById("masrafYapanInput").value = taslakIs.personel || "";
+                document.getElementById("masrafFiyati").value = "";
+                document.getElementById("masrafNotu").value = "";
+                document.getElementById("masrafFiyati").focus();
+                aktifIsiKaydet(true);
+                kayitListesiDonemi = aktifDonem;
+                donemListesiVeOzetleriGuncelle();
+                tumKaydedilmisMasraflariListele();
+            });
+
+            document.getElementById("btnIcerikDuzenleKaydet").addEventListener("click", function () {
+                if (acikMasrafIndex === null || !taslakIs || !taslakIs.masraflar[acikMasrafIndex]) return;
+                var hamFiyat = parseFloat(document.getElementById("icerikFiyatInput").value);
+                if (isNaN(hamFiyat) || hamFiyat < 0) {
+                    alert("Lütfen geçerli bir fiyat (0 veya üzeri) girin.");
+                    return;
+                }
+
+                taslakIs.masraflar[acikMasrafIndex].tur = document.getElementById("icerikKalemSec").value;
+                taslakIs.masraflar[acikMasrafIndex].yapan = document.getElementById("icerikYapanInput").value.trim();
+                taslakIs.masraflar[acikMasrafIndex].tutar = hamFiyat;
+                taslakIs.masraflar[acikMasrafIndex].tarih = document.getElementById("icerikTarihInput").value || bugunTarihStr();
+                taslakIs.masraflar[acikMasrafIndex].aciklama = document.getElementById("icerikAciklamaInput").value.trim();
+
+                aktifIsiKaydet(true);
+                kayitListesiDonemi = aktifDonem;
+                donemListesiVeOzetleriGuncelle();
+                tumKaydedilmisMasraflariListele();
+                icerikPaneliniKapat();
+            });
+
+            document.getElementById("btnIcerikSil").addEventListener("click", function () {
+                if (acikMasrafIndex === null || !taslakIs || !taslakIs.masraflar[acikMasrafIndex]) return;
+                if (!confirm("Bu masraf kaydını silmek istiyor musunuz?")) return;
+                taslakIs.masraflar.splice(acikMasrafIndex, 1);
+                aktifIsiKaydet(true);
+                kayitListesiDonemi = aktifDonem;
+                donemListesiVeOzetleriGuncelle();
+                tumKaydedilmisMasraflariListele();
+                icerikPaneliniKapat();
+            });
+
+            document.getElementById("btnIcerikKapat").addEventListener("click", function () {
+                icerikPaneliniKapat();
+            });
+
+            document.getElementById("btnSayfa5DonemIslerineDon").addEventListener("click", function () {
+                donemListesiVeOzetleriGuncelle();
+                ekranGoster(2);
+            });
+
+            document.getElementById("btnIsiBitirListeyeDon").addEventListener("click", function () {
+                aktifIsiKaydet(false);
+                donemListesiVeOzetleriGuncelle();
+                tumKaydedilmisMasraflariListele();
+                yeniTaslakSifirla();
+                ekranGoster(2);
+            });
+        }
+
+        secenekleriDoldur();
+        olayBaglantilariniKur();
+        bulutDinleyicisiniBaslat();
+    })();
+</script>
+</body>
+</html>
